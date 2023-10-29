@@ -66,6 +66,7 @@ class App:
             return
 
         if compared is not None:
+        # todo try to print elemnt that is being moved during animation (red is element being checked, green being moved)
             self.draw()
             self.draw_value_bar(compared[0], RED)
             self.draw_value_bar(compared[1], GREEN)
