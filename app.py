@@ -2,7 +2,8 @@
 from random import randint
 import pygame
 from settings import *
-from math import floor, ceil
+from math import ceil
+from sorting_algorithms_imp import *
 
 
 class App:
@@ -28,6 +29,13 @@ class App:
         self.lst = self.get_random_list()
         self.value_bar_width = round((self.screen_width - self.pad_x) / self.list_length - VALUES_BAR_SPACE)
 
+        if self.value_bar_width < 1:
+            raise ValueError("Too small screen for too many values")
+
+        # sorting
+        self.Sort_Algorithm = InsertionSort
+        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
+
     def get_random_list(self):
         return [randint(self.min_value, self.max_value) for _ in range(self.list_length)]
 
@@ -36,27 +44,32 @@ class App:
         x = ceil(list_index * (self.value_bar_width + VALUES_BAR_SPACE) + self.pad_x / 2)
         y = ceil(((self.screen_height - self.pad_y) * (1 - self.lst[list_index] / self.max_value)) + self.pad_y / 2)
 
-
-
         # count width and height of value bar
         width = self.value_bar_width
         height = self.screen_height - self.pad_y/2 - y
 
-
-        print(f"list[{list_index}]={self.lst[list_index]} \n cords: x={x}, y={y}\n size: width={width}, height={height}\n\n")
         pygame.draw.rect(self.screen, color, (x, y, width, height))
 
     def draw(self):
         self.screen.fill(BLACK)
 
-        # todo print instruction
+        # todo print instruction for user
 
         # print value bars
         for i, _ in enumerate(self.lst):
             self.draw_value_bar(i)
 
-        pygame.display.flip()
+    def sort(self):
+        try:
+            compared = next(self.sorting_fun)
+        except StopIteration:
+            return
 
+        if compared is not None:
+            self.draw()
+            self.draw_value_bar(compared[0], RED)
+            self.draw_value_bar(compared[1], GREEN)
+            pygame.display.flip()
 
     def main_loop(self):
         running = True
@@ -66,23 +79,23 @@ class App:
         while running:
             clock.tick(FPS)
             self.draw()
+            pygame.display.flip()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN:
+                    # todo handle different sorting types
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     if event.key == pygame.K_r:
+                        sorting = False
                         self.lst = self.get_random_list()
+                        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
                     if event.key == pygame.K_SPACE:
                         sorting = not sorting
 
-
-
+            if sorting:
+                self.sort()
 
         pygame.quit()
-
-
-app = App()
-app.main_loop()
