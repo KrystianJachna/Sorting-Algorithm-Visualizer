@@ -1,4 +1,4 @@
-
+import time
 from random import randint
 import pygame
 from settings import *
@@ -33,20 +33,31 @@ class App:
             raise ValueError("Too small screen for too many values")
 
         # sorting
+        # todo list of sorting algorithms
         self.Sort_Algorithm = InsertionSort
         self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
 
     def get_random_list(self):
-        return [randint(self.min_value, self.max_value) for _ in range(self.list_length)]
+        return [randint(self.min_value, self.max_value + 1) for _ in range(self.list_length)]
 
-    def draw_value_bar(self, list_index, color=WHITE):
+    def draw_value_bar(self, list_index, color=WHITE, height=None, with_reset=False):
+        height = height if height is not None else self.lst[list_index]
+
         # count x,y coordinate from which we start drawing value bar
         x = ceil(list_index * (self.value_bar_width + VALUES_BAR_SPACE) + self.pad_x / 2)
-        y = ceil(((self.screen_height - self.pad_y) * (1 - self.lst[list_index] / self.max_value)) + self.pad_y / 2)
+        y = ceil(((self.screen_height - self.pad_y) * (1 - height / self.max_value)) + self.pad_y / 2)
 
         # count width and height of value bar
         width = self.value_bar_width
-        height = self.screen_height - self.pad_y/2 - y
+        height = self.screen_height - self.pad_y / 2 - y
+
+        # clear previous shown bar
+        if with_reset:
+            pygame.display.update(pygame.draw.rect(
+                self.screen,
+                BLACK,
+                (x, self.pad_y // 2, width, self.screen_height - self.pad_y)
+            ))
 
         pygame.draw.rect(self.screen, color, (x, y, width, height))
 
@@ -61,16 +72,21 @@ class App:
 
     def sort(self):
         try:
-            compared = next(self.sorting_fun)
+            red, green = next(self.sorting_fun)
         except StopIteration:
             return
 
-        if compared is not None:
-        # todo try to print elemnt that is being moved during animation (red is element being checked, green being moved)
+        if red and green:
+        # todo try to print elemnt that is being moved during animation (red is element being checked, green being
+        #  moved)
             self.draw()
-            self.draw_value_bar(compared[0], RED)
-            self.draw_value_bar(compared[1], GREEN)
-            pygame.display.flip()
+            self.draw_value_bar(red[0], RED, height=red[1], with_reset=True)
+            self.draw_value_bar(green[0], GREEN, height=green[1], with_reset=True)
+
+
+    def reset(self):
+        self.lst = self.get_random_list()
+        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
 
     def main_loop(self):
         running = True
@@ -80,7 +96,6 @@ class App:
         while running:
             clock.tick(FPS)
             self.draw()
-            pygame.display.flip()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -91,12 +106,12 @@ class App:
                         running = False
                     if event.key == pygame.K_r:
                         sorting = False
-                        self.lst = self.get_random_list()
-                        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
+                        self.reset()
                     if event.key == pygame.K_SPACE:
                         sorting = not sorting
 
             if sorting:
                 self.sort()
-
+            pygame.display.flip()
+            #time.sleep()    # todo for testing
         pygame.quit()

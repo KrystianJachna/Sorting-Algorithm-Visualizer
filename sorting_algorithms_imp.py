@@ -10,11 +10,9 @@ class BubbleSort(SortingAlgorithm):
 
         for i in range(size):
             for j in range(0, size - i - 1):
-                yield j, j+1
+                yield (j+1, lst[j+1]), (j, lst[j])
                 if lst[j] > lst[j + 1]:
                     lst[j], lst[j + 1] = lst[j + 1], lst[j]
-
-        yield None
 
 
 class InsertionSort(SortingAlgorithm):
@@ -26,14 +24,14 @@ class InsertionSort(SortingAlgorithm):
             current_value = lst[i]
             position = i
 
+            #yield position - 1, position
+
             while position > 0 and lst[position - 1] > current_value:
                 lst[position] = lst[position - 1]
+                yield (position - 1, lst[position - 1]), (position, current_value)
                 position -= 1
-                yield position, position + 1
 
             lst[position] = current_value
-            yield position, position
 
-        yield None
 
 # todo add more algorithms
