@@ -21,6 +21,7 @@ class App:
         )
         self.pad_x = PAD_X
         self.pad_y = PAD_Y
+        self.font = pygame.font.SysFont("comicsans", 30)   #todo check if not too big
 
         # list settings
         self.list_length = list_length
@@ -31,6 +32,8 @@ class App:
 
         if self.value_bar_width < 1:
             raise ValueError("Too small screen for too many values")
+        if self.pad_y < 200:
+            raise Exception("Too small y-padding")
 
         # sorting
         # todo list of sorting algorithms
@@ -61,10 +64,22 @@ class App:
 
         pygame.draw.rect(self.screen, color, (x, y, width, height))
 
-    def draw(self):
-        self.screen.fill(BLACK)
+    def draw_info(self, sorting):
+        options = self.font.render("R - Reset & Randomize  |  SPACE - Start/Stop Sorting  |  C - Change Algorithm",
+                                   True, GREY)
+        self.screen.blit(options, (self.screen_width // 2 - options.get_width() // 2, self.pad_y // 4))
 
-        # todo print instruction for user
+        state = "sorting" if sorting else "stopped"
+        alg = "todo"
+        speed = "todo"
+        sorting_info = self.font.render(f"Algorithm: {alg}  |  State: {state}  |  Speed: {speed}",
+                                True, GREY)
+        self.screen.blit(sorting_info, (self.screen_width // 2 - sorting_info.get_width() // 2,
+                                        self.screen_height - self.pad_y // 4))
+
+    def draw(self, sorting=False):
+        self.screen.fill(BLACK)
+        self.draw_info(sorting)
 
         # print value bars
         for i, _ in enumerate(self.lst):
@@ -77,12 +92,9 @@ class App:
             return
 
         if red and green:
-        # todo try to print elemnt that is being moved during animation (red is element being checked, green being
-        #  moved)
-            self.draw()
+            self.draw(sorting=True)
             self.draw_value_bar(red[0], RED, height=red[1], with_reset=True)
             self.draw_value_bar(green[0], GREEN, height=green[1], with_reset=True)
-
 
     def reset(self):
         self.lst = self.get_random_list()
@@ -95,7 +107,7 @@ class App:
 
         while running:
             clock.tick(FPS)
-            self.draw()
+            self.draw(sorting)
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -113,5 +125,4 @@ class App:
             if sorting:
                 self.sort()
             pygame.display.flip()
-            #time.sleep()    # todo for testing
         pygame.quit()

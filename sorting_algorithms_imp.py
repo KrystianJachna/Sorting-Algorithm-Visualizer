@@ -24,8 +24,6 @@ class InsertionSort(SortingAlgorithm):
             current_value = lst[i]
             position = i
 
-            #yield position - 1, position
-
             while position > 0 and lst[position - 1] > current_value:
                 lst[position] = lst[position - 1]
                 yield (position - 1, lst[position - 1]), (position, current_value)
