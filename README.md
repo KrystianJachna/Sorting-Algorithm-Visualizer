@@ -43,3 +43,7 @@ python main.py
 - Press `SPACE` to start/stop sorting.
 - Press `S` to change the sorting speed.
 - Press `R` to reset and randomize the input list.
+
+## Screenshots
+
+![Screenshot from app](images/sorting_app.png)
