@@ -29,7 +29,7 @@ This program visualizes various sorting algorithms in real-time, allowing users 
 2. Navigate to the project directory:
 
     ```bash
-    cd sorting-visualizer```
+    cd sorting-visualizer
 
 ## Usage
 
