@@ -1,4 +1,4 @@
-import time
+
 from random import randint
 import pygame
 from settings import *
@@ -21,7 +21,7 @@ class App:
         )
         self.pad_x = PAD_X
         self.pad_y = PAD_Y
-        self.font = pygame.font.SysFont("comicsans", 30)   #todo check if not too big
+        self.font = pygame.font.SysFont("comicsans", 30)
 
         # list settings
         self.list_length = list_length
@@ -32,13 +32,23 @@ class App:
 
         if self.value_bar_width < 1:
             raise ValueError("Too small screen for too many values")
-        if self.pad_y < 200:
+        if self.pad_y < 50:
             raise Exception("Too small y-padding")
 
         # sorting
         self.sorting_algorithms = [BubbleSort, InsertionSort]
         self.current_algorithm_index = 0
         self.sorting_fun = self.sorting_algorithms[0].sort(self.lst)
+
+        # sorting delay
+        self.delay_list = [0, 50, 150]
+        self.current_delay_index = 0
+        self.current_delay = self.delay_list[0]
+        self.delay_names = {0: "fast", 50: "medium", 150: "slow"}
+
+    def change_delay(self):
+        self.current_delay_index = (self.current_delay_index + 1) % len(self.delay_list)
+        self.current_delay = self.delay_list[self.current_delay_index]
 
     def change_algorithm(self):
         self.current_algorithm_index = (self.current_algorithm_index + 1) % len(self.sorting_algorithms)
@@ -63,22 +73,24 @@ class App:
             pygame.display.update(pygame.draw.rect(
                 self.screen,
                 BLACK,
-                (x, self.pad_y // 2, width, self.screen_height - self.pad_y)
+                (x, self.pad_y // 2 - 10, width, self.screen_height - self.pad_y + 10)
             ))
-
-        pygame.draw.rect(self.screen, color, (x, y, width, height))
+            pygame.display.update(pygame.draw.rect(self.screen, color, (x, y, width, height)))
+        else:
+            pygame.draw.rect(self.screen, color, (x, y, width, height))
 
     def draw_info(self, sorting):
-        options = self.font.render("R - Reset & Randomize  |  SPACE - Start/Stop Sorting  |  C - Change Algorithm",
+        options = self.font.render("R - Reset & Randomize  |  SPACE - Start/Stop Sorting  |  "
+                                   "C - Change Algorithm  |  S - Speed sorting",
                                    True, GREY)
         self.screen.blit(options, (self.screen_width // 2 - options.get_width() // 2, self.pad_y // 4))
 
         state = "sorting" if sorting else "stopped"
-        alg = "todo"
-        speed = "todo"
+
         sorting_info = self.font.render(f"Algorithm: "
                                         f"{self.sorting_algorithms[self.current_algorithm_index].__name__}  "
-                                        f"|  State: {state}  |  Speed: {speed}",
+                                        f"|  State: {state}  |  "
+                                        f"Speed: {self.delay_names[self.delay_list[self.current_delay_index]]}",
                                         True, GREY)
         self.screen.blit(sorting_info, (self.screen_width // 2 - sorting_info.get_width() // 2,
                                         self.screen_height - self.pad_y // 4))
@@ -107,7 +119,6 @@ class App:
         self.lst = self.get_random_list()
         self.sorting_fun = self.sorting_algorithms[self.current_algorithm_index].sort(self.lst)
 
-
     def main_loop(self):
         running = True
         sorting = False
@@ -130,8 +141,12 @@ class App:
                         self.reset()
                     if event.key == pygame.K_SPACE:
                         sorting = not sorting
+                    if event.key == pygame.K_s:
+                        self.change_delay()
 
             if sorting:
                 sorting = self.sort()
+
             pygame.display.flip()
+            pygame.time.delay(self.current_delay)
         pygame.quit()

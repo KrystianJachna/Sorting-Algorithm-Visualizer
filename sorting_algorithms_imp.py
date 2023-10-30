@@ -34,4 +34,3 @@ class InsertionSort(SortingAlgorithm):
             lst[position] = current_value
 
 
-# todo add more algorithms
