@@ -15,6 +15,6 @@ PAD_Y = 200             # vertical space between border and list
 VALUES_BAR_SPACE = 2    # space between values
 
 # List settings
-LIST_LENGTH = 100
+LIST_LENGTH = 30
 LIST_MIN = 0
 LIST_MAX = 100

@@ -36,9 +36,13 @@ class App:
             raise Exception("Too small y-padding")
 
         # sorting
-        # todo list of sorting algorithms
-        self.Sort_Algorithm = InsertionSort
-        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
+        self.sorting_algorithms = [BubbleSort, InsertionSort]
+        self.current_algorithm_index = 0
+        self.sorting_fun = self.sorting_algorithms[0].sort(self.lst)
+
+    def change_algorithm(self):
+        self.current_algorithm_index = (self.current_algorithm_index + 1) % len(self.sorting_algorithms)
+        self.sorting_fun = self.sorting_algorithms[self.current_algorithm_index].sort(self.lst)
 
     def get_random_list(self):
         return [randint(self.min_value, self.max_value + 1) for _ in range(self.list_length)]
@@ -72,8 +76,10 @@ class App:
         state = "sorting" if sorting else "stopped"
         alg = "todo"
         speed = "todo"
-        sorting_info = self.font.render(f"Algorithm: {alg}  |  State: {state}  |  Speed: {speed}",
-                                True, GREY)
+        sorting_info = self.font.render(f"Algorithm: "
+                                        f"{self.sorting_algorithms[self.current_algorithm_index].__name__}  "
+                                        f"|  State: {state}  |  Speed: {speed}",
+                                        True, GREY)
         self.screen.blit(sorting_info, (self.screen_width // 2 - sorting_info.get_width() // 2,
                                         self.screen_height - self.pad_y // 4))
 
@@ -89,16 +95,18 @@ class App:
         try:
             red, green = next(self.sorting_fun)
         except StopIteration:
-            return
+            return False
 
         if red and green:
             self.draw(sorting=True)
             self.draw_value_bar(red[0], RED, height=red[1], with_reset=True)
             self.draw_value_bar(green[0], GREEN, height=green[1], with_reset=True)
+        return True
 
     def reset(self):
         self.lst = self.get_random_list()
-        self.sorting_fun = self.Sort_Algorithm.sort(self.lst)
+        self.sorting_fun = self.sorting_algorithms[self.current_algorithm_index].sort(self.lst)
+
 
     def main_loop(self):
         running = True
@@ -113,7 +121,8 @@ class App:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN:
-                    # todo handle different sorting types
+                    if event.key == pygame.K_c:
+                        self.change_algorithm()
                     if event.key == pygame.K_ESCAPE:
                         running = False
                     if event.key == pygame.K_r:
@@ -123,6 +132,6 @@ class App:
                         sorting = not sorting
 
             if sorting:
-                self.sort()
+                sorting = self.sort()
             pygame.display.flip()
         pygame.quit()
