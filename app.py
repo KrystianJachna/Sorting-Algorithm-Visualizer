@@ -36,7 +36,7 @@ class App:
             raise Exception("Too small y-padding")
 
         # sorting
-        self.sorting_algorithms = [BubbleSort, InsertionSort]
+        self.sorting_algorithms = [BubbleSort, InsertionSort, SelectionSort]
         self.current_algorithm_index = 0
         self.sorting_fun = self.sorting_algorithms[0].sort(self.lst)
 
@@ -81,7 +81,7 @@ class App:
 
     def draw_info(self, sorting):
         options = self.font.render("R - Reset & Randomize  |  SPACE - Start/Stop Sorting  |  "
-                                   "C - Change Algorithm  |  S - Speed sorting",
+                                   "A - Change Algorithm  |  S - Change Speed",
                                    True, GREY)
         self.screen.blit(options, (self.screen_width // 2 - options.get_width() // 2, self.pad_y // 4))
 
@@ -132,7 +132,7 @@ class App:
                 if event.type == pygame.QUIT:
                     running = False
                 if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_c:
+                    if event.key == pygame.K_a:
                         self.change_algorithm()
                     if event.key == pygame.K_ESCAPE:
                         running = False
