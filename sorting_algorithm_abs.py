@@ -14,3 +14,5 @@ class SortingAlgorithm(ABC):
         :param lst: list of values to be sorted
         :return: tuple of indexes where each index is a value that is being compared
         """
+
+    #TODO: make functions compare/swap to show progress instead of yielding to make it more friendly to upgrade

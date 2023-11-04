@@ -36,7 +36,7 @@ class App:
             raise Exception("Too small y-padding")
 
         # sorting
-        self.sorting_algorithms = [BubbleSort, InsertionSort, SelectionSort]
+        self.sorting_algorithms = [BubbleSort, InsertionSort, SelectionSort, QuickSort]
         self.current_algorithm_index = 0
         self.sorting_fun = self.sorting_algorithms[0].sort(self.lst)
 
