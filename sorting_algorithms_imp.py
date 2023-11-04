@@ -43,7 +43,7 @@ class SelectionSort(SortingAlgorithm):
             min_index = i
 
             for j in range(i + 1, size):
-                yield (j, lst[j]), (j-1, lst[min_index])
+                yield (j, lst[j]), (min_index, lst[min_index])
                 if lst[j] < lst[min_index]:
                     min_index = j
             lst[i], lst[min_index] = lst[min_index], lst[i]
