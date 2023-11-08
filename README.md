@@ -21,22 +21,18 @@ This program visualizes various sorting algorithms in real-time, allowing users 
 
 ## Installation
 
-1. Clone the repository:
+Clone the repository:
 
    ```bash
-   git clone https://github.com/your-username/sorting-visualizer.git
-
-2. Navigate to the project directory:
-
-    ```bash
-    cd sorting-visualizer
+   git clone git@github.com:KrystianJachna/Sorting-Algorithm-Visualizer.git
+  ````
 
 ## Usage
 
 Run the main script:
 
 ```bash
-python main.py
+python3 "Sorting-Algorithm-Visualizer"
 ```
 
 - Press `A` to change the sorting algorithm.
